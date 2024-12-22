@@ -1,0 +1,51 @@
+pipeline:
+  name: myfirstcipipeline
+  identifier: myfirstcipipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: build
+        identifier: build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: GitClone
+                  name: GitClone_1
+                  identifier: GitClone_1
+                  spec:
+                    connectorRef: githubjinn330
+                    repoName: harness-python-lab
+                    build:
+                      type: branch
+                      spec:
+                        branch: main
+              - step:
+                  type: RunTests
+                  name: RunTests_1
+                  identifier: RunTests_1
+                  spec:
+                    language: Python
+                    buildTool: Pytest
+                    runOnlySelectedTests: true
+                    enableTestSplitting: false
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: account.harnessImage
+                    repo: rrdocker/harnesdpyapp
+                    tags:
+                      - v1
